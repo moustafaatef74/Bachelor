@@ -167,6 +167,7 @@ public class OnClick : MonoBehaviour
         if (solDone == solution.GetLength(0))
         {
             AudioSource.PlayClipAtPoint(done, transform.position);
+            
         }
     }
 
