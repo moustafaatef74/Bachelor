@@ -9,6 +9,7 @@ TagManager:
   - ledport
   - codeBlock
   - placeHolder
+  - MainGameController
   layers:
   - Default
   - TransparentFX

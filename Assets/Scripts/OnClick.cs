@@ -7,6 +7,8 @@ using Random = System.Random;
 
 public class OnClick : MonoBehaviour
 {
+    public LevelSwitching levelSwitching;
+
     int colorRand = 0;
     public GameObject malecable;
     public GameObject femalecable;
@@ -30,6 +32,7 @@ public class OnClick : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        levelSwitching = GameObject.Find("mainGameController").GetComponent<LevelSwitching>();
         
     }
 
@@ -167,7 +170,10 @@ public class OnClick : MonoBehaviour
         if (solDone == solution.GetLength(0))
         {
             AudioSource.PlayClipAtPoint(done, transform.position);
-            
+            levelSwitching.level0Done = true;
+            print("done");
+
+
         }
     }
 

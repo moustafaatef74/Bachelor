@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/arduinoScene0.unity
     guid: bf9148894614667479397a6176710a0e
+  - enabled: 1
+    path: Assets/Scenes/rollercoaster.unity
+    guid: 27b32301b16822c47b4ec1ff3ddc7ae1
   m_configObjects: {}
