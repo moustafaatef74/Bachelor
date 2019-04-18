@@ -1,18 +1,19 @@
 ﻿//======= Copyright (c) Valve Corporation, All rights reserved. ===============
-using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Random = System.Random;
-using System;
 
+using Random = System.Random;
 namespace Valve.VR.Extras
 {
-    public class VRLaserClick : MonoBehaviour
+    public class VRLaserClick1 : MonoBehaviour
     {
         public SteamVR_Behaviour_Pose pose;
-        public LevelSwitching levelSwitching; 
+
         //public SteamVR_Action_Boolean interactWithUI = SteamVR_Input.__actions_default_in_InteractUI;
         public SteamVR_Action_Boolean interactWithUI = SteamVR_Input.GetBooleanAction("InteractUI");
 
@@ -32,30 +33,32 @@ namespace Valve.VR.Extras
         Transform previousContact = null;
 
         int colorRand = 0;
-        public GameObject malecable;
-        public GameObject femalecable;
-        public GameObject wire;
+        public LevelSwitching levelSwitching;
+        public GameObject codeBlock;
+        public GameObject placeHolder;
         public AudioClip done;
-        public AudioClip zap;
-        
+        public AudioClip take;
+        public AudioClip put;
+        public GameObject codeAssembler;
+        GameObject currentBlock;
         int connectionDone = 0;
         private string a;
         Ray ray;
         RaycastHit hit;
         bool connection = false;
-        GameObject[,] connected = new GameObject[10, 2];
-        string[,] solution = new string[2, 2] { { "5V", "positivePort" }, { "GND", "negativePort" } };
+        GameObject[] connected = new GameObject[30];
+        string[] solution = new string[8] { "Forever", "digitalOn12", "Wait1", "digitalOn13", "digitalOff12", "Wait1", "digitalOff13", "EndForever" };
         int solDone = 0;
         int checkSoli = 0;
         int checkSolj = 0;
         int i = 0;
         int j = 0;
+        bool clear = false;
         GameObject target;
         int count = 0;
 
         private void Start()
         {
-            levelSwitching = GameObject.Find("mainGameController").GetComponent<LevelSwitching>();
             if (pose == null)
                 pose = this.GetComponent<SteamVR_Behaviour_Pose>();
             if (pose == null)
@@ -118,7 +121,6 @@ namespace Valve.VR.Extras
 
         private void Update()
         {
-
             if (!isActive)
             {
                 isActive = true;
@@ -169,49 +171,73 @@ namespace Valve.VR.Extras
                 argsClick.distance = hit.distance;
                 argsClick.flags = 0;
                 argsClick.target = hit.transform;
-                if (levelSwitching.level0Done == false)
-                {
-                    if (hit.collider.tag == "port")
-                    {
-                        GameObject temp = (GameObject)Instantiate(malecable);
-                        temp.name = hit.collider.name;
 
-                        temp.transform.position = hit.collider.transform.position + new Vector3(0, 0, 0);
-                        temp.SetActive(true);
-                        connected[i, j] = hit.collider.gameObject;
-                        //connected[i+1, j] = null;
-                        print(connected[i, j].name);
-                        //PointA.name = hit.collider.name;
-                        //PointA.transform.GetChild(0).name = hit.collider.name;
-                        //PointA.transform.GetChild(1).name = hit.collider.name;
-                        j++;
-                        AudioSource.PlayClipAtPoint(zap, temp.transform.position);
-                    }
-                    if (hit.collider.tag == "ledport")
+                if (hit.collider.tag == "codeBlock")
+                {
+                    currentBlock = hit.collider.gameObject;
+                    AudioSource.PlayClipAtPoint(take, hit.collider.transform.position);
+                }
+
+                if (hit.collider.tag == "placeHolder")
+                {
+
+                    GameObject temp = (GameObject)Instantiate(currentBlock);
+                    if (temp.gameObject.transform.GetChild(0).transform.childCount == 1)
                     {
-                        GameObject temp = (GameObject)Instantiate(femalecable);
-                        temp.name = hit.collider.name;
-                        temp.transform.position = hit.collider.transform.position + new Vector3(0, -0.25f, 0);
-                        temp.SetActive(true);
-                        connected[i, j] = hit.collider.gameObject;
-                        //connected[i + 1, j] = null;
-                        print(connected[i, j].name);
-                        //PointA.name = hit.collider.name;
-                        //PointA.transform.GetChild(0).name = hit.collider.name;
-                        j++;
-                        AudioSource.PlayClipAtPoint(zap, temp.transform.position);
+                        temp.name = currentBlock.name;
                     }
-                    if (j == 2)
+                    else
                     {
-                        makeWire();
+                        TextMeshProUGUI value = (temp.gameObject.transform.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>());
+                        temp.name = currentBlock.name + value.text;
+                        Destroy(temp.gameObject.transform.GetChild(1).gameObject);
+                        Destroy(temp.gameObject.transform.GetChild(2).gameObject);
                     }
+
+                    //temp.name = hit.collider.name;
+                    temp.transform.parent = codeAssembler.transform;
+                    temp.transform.position = hit.collider.transform.position + new Vector3(0, 0, 0);
+                    temp.transform.Rotate(0, 270, 0);
+                    temp.transform.localScale = new Vector3(.33f, 1f, 1f);
+                    temp.SetActive(true);
+                    connected[j] = temp;
+                    codeAssembler.transform.FindChild("placeHolder").transform.position += new Vector3(0, -0.33f, 0);
+
+
+
+                    //connected[i+1, j] = null;
+                    print(connected[j].name);
+                    codeAssembler.transform.position += new Vector3(0, 1, 0);
+                    //PointA.name = hit.collider.name;
+                    //PointA.transform.GetChild(0).name = hit.collider.name;
+                    //PointA.transform.GetChild(1).name = hit.collider.name;
+                    j++;
+                    AudioSource.PlayClipAtPoint(put, temp.transform.position);
+                }
+                if (Input.GetMouseButtonDown(0) & hit.collider.name == "-ve")
+                {
+                    string value = hit.collider.gameObject.transform.parent.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>().text;
+                    int valueToInt = Convert.ToInt32(value) - 1;
+                    if (valueToInt < 0)
+                    {
+                        valueToInt = 0;
+                    }
+                    hit.collider.gameObject.transform.parent.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>().text = valueToInt + "";
+                }
+                if (Input.GetMouseButtonDown(0) & hit.collider.name == "+ve")
+                {
+                    string value = hit.collider.gameObject.transform.parent.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>().text;
+                    int valueToInt = System.Convert.ToInt32(value) + 1;
+                    hit.collider.gameObject.transform.parent.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>().text = valueToInt + "";
+                }
+                if (clear == false)
+                {
+                    checkScore();
                 }
 
 
-                    
-               
 
-                    OnPointerClick(argsClick);
+                OnPointerClick(argsClick);
             }
 
             if (interactWithUI != null && interactWithUI.GetState(pose.inputSource))
@@ -226,92 +252,43 @@ namespace Valve.VR.Extras
             }
             pointer.transform.localPosition = new Vector3(0f, 0f, dist / 2f);
         }
-
-        void makeWire()
+        public struct PointerEventArgs
         {
-            
-            GameObject temp = Instantiate(wire);
-
-            GameObject start = temp.transform.GetChild(1).gameObject;
-            Collider c = connected[i, 0].GetComponent<Collider>();
-            if (connected[i, 0].tag == "port")
-                start.transform.position = new Vector3(connected[i, 0].transform.position.x, c.bounds.max.y, connected[i, 0].transform.position.z);
-            else
-                start.transform.position = new Vector3(connected[i, 0].transform.position.x, c.bounds.min.y, connected[i, 0].transform.position.z);
-
-            start = temp.transform.GetChild(2).gameObject;
-            c = connected[i, 1].GetComponent<Collider>();
-            if (connected[i, 1].tag == "port")
-                start.transform.position = new Vector3(connected[i, 1].transform.position.x, c.bounds.max.y, connected[i, 1].transform.position.z);
-            else
-                start.transform.position = new Vector3(connected[i, 1].transform.position.x, c.bounds.min.y, connected[i, 1].transform.position.z);
-
-            //temp.transform.localScale = new Vector3(.1f, Vector3.Distance(connected[i,0].transform.position, connected[i, 1].transform.position) / 2, .1f);
-            //temp.transform.position = Vector3.Lerp(connected[i, 0].transform.position, connected[i, 1].transform.position, (float)0.5);
-            //temp.transform.LookAt(connected[i, 1].transform.position);
-            //temp.transform.Rotate(90, 0, 0);
-            //temp.transform.position += new Vector3(0, .3f, 0);
-            //temp.transform.Rotate(0, 0, 0);
-            Random rand = new Random();
-            Color color = Color.red;
-            switch (colorRand)
-            {
-                case 0: color = Color.red; break;
-                case 1: color = Color.blue; break;
-                case 2: color = Color.green; break;
-                case 3: color = Color.yellow; break;
-                case 4: color = Color.black; break;
-                case 5: color = Color.white; break;
-            }
-            colorRand++;
-            colorRand %= 6;
-            temp.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", color);
-            connectionDone++;
-            temp.SetActive(true);
-            j = 0;
-            checkScore();
+            public SteamVR_Input_Sources fromInputSource;
+            public uint flags;
+            public float distance;
+            public Transform target;
         }
+
+
+        public delegate void PointerEventHandler(object sender, PointerEventArgs e);
         void checkScore()
         {
-            for (int connect = 0; connect < connectionDone; connect++)
+            if (j >= solution.Length)
             {
-                for (checkSoli = 0; checkSoli < solution.GetLength(0) && solDone < solution.GetLength(0); checkSoli++)
+
+                for (checkSoli = 0; checkSoli < solution.Length; checkSoli++)
                 {
-                    for (checkSolj = 0; checkSolj < 2; checkSolj++)
+
+                    if (connected[checkSoli].name == solution[checkSoli])
                     {
-
-                        if (connected[connect, 0].name == solution[checkSoli, checkSolj])
-                        {
-                            if (connected[connect, 1].name == solution[checkSoli, (checkSolj + 1) % 2])
-                            {
-                                solDone++;
-                                print(solDone);
-                                solution[checkSoli, checkSolj] = null;
-                                solution[checkSoli, (checkSolj + 1) % 2] = null;
-                                break;
-
-                            }
-                        }
+                        clear = true;
+                    }
+                    else
+                    {
+                        clear = false;
+                        break;
                     }
                 }
             }
-            if (solDone == solution.GetLength(0))
+            if (clear)
             {
-                levelSwitching.level0Done = true;
+                
+                levelSwitching.level1Done = true;
+                
             }
         }
     }
+
     
-
-    public struct PointerEventArgs
-    {
-        public SteamVR_Input_Sources fromInputSource;
-        public uint flags;
-        public float distance;
-        public Transform target;
-    }
-
-
-    public delegate void PointerEventHandler(object sender, PointerEventArgs e);
-
 }

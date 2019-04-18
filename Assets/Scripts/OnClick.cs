@@ -169,10 +169,7 @@ public class OnClick : MonoBehaviour
         }
         if (solDone == solution.GetLength(0))
         {
-            AudioSource.PlayClipAtPoint(done, transform.position);
-            levelSwitching.level0Done = true;
-            print("done");
-
+            levelSwitching.level0Done = true;            
 
         }
     }

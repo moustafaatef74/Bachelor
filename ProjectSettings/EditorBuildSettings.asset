@@ -8,16 +8,22 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Menu.unity
     guid: 2aa48077748e08143b8f24f77ccdccd0
   - enabled: 1
     path: Assets/Scenes/Main.unity
     guid: 4e0493eb68e273744a5f1a363cd31747
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/arduinoScene0.unity
     guid: bf9148894614667479397a6176710a0e
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/rollercoaster.unity
     guid: 27b32301b16822c47b4ec1ff3ddc7ae1
+  - enabled: 0
+    path: Assets/Scenes/arduinoScene1.unity
+    guid: 46bbbf64061b33b428862c9711f1db26
+  - enabled: 0
+    path: Assets/Scenes/codeScene1.unity
+    guid: 25e6b50fbf607514bb7cc8891635088c
   m_configObjects: {}

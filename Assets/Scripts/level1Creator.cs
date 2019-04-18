@@ -14,19 +14,19 @@ public class level1Creator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        connected[0, 0] = GameObject.Find("12");
-        connected[0, 1] = GameObject.Find("LED").transform.FindChild("positivePort").gameObject;
+        connected[0, 0] = GameObject.Find("arduino (1)").transform.FindChild("Box004").transform.FindChild("12").gameObject;
+        connected[0, 1] = GameObject.Find("LED (2)").transform.FindChild("positivePort").gameObject;
         Connect();
         i++;
-        connected[1, 0] = GameObject.Find("12");
+        connected[1, 0] = GameObject.Find("arduino (1)").transform.FindChild("Box004").transform.FindChild("12").gameObject;
         connected[1, 1] = GameObject.Find("LED (1)").transform.FindChild("positivePort").gameObject;
         Connect();
         i++;
-        connected[2, 0] = GameObject.Find("GND");
-        connected[2, 1] = GameObject.Find("LED").transform.FindChild("negativePort").gameObject;
+        connected[2, 0] = GameObject.Find("arduino (1)").transform.FindChild("Box002").transform.FindChild("GND").gameObject;
+        connected[2, 1] = GameObject.Find("LED (2)").transform.FindChild("negativePort").gameObject;
         Connect();
         i++;
-        connected[3, 0] = GameObject.Find("GND");
+        connected[3, 0] = GameObject.Find("arduino (1)").transform.FindChild("Box002").transform.FindChild("GND").gameObject;
         connected[3, 1] = GameObject.Find("LED (1)").transform.FindChild("negativePort").gameObject;
         Connect();
         i++;
@@ -44,12 +44,17 @@ public class level1Creator : MonoBehaviour
                     if (connected[i, j].tag == "port")
                     {
                         temp = Instantiate(malecable);
+                        temp.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
                         temp.transform.position = connected[i, j].transform.position + new Vector3(0, 0, 0);
+                        temp.transform.parent = GameObject.Find("Scene1Connections").transform;
                     }
 
                     if (connected[i, j].tag == "ledport") {
                         temp = Instantiate(femalecable);
-                        temp.transform.position = connected[i, j].transform.position + new Vector3(0, -0.25f, 0);
+                        temp.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                        temp.transform.position = connected[i, j].transform.position + new Vector3(0, -0.14f, 0);
+                        temp.transform.parent = GameObject.Find("Scene1Connections").transform;
+
                     }
                     temp.SetActive(true);
                 }
@@ -64,7 +69,7 @@ public class level1Creator : MonoBehaviour
     void Connect()
     {
         GameObject temp = Instantiate(wire);
-
+        temp.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         GameObject start = temp.transform.GetChild(1).gameObject;
         Collider c = connected[i, 0].GetComponent<Collider>();
         if (connected[i, 0].tag == "port")
@@ -97,5 +102,6 @@ public class level1Creator : MonoBehaviour
         colorRand %= 6;
         temp.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", color);
         temp.SetActive(true);
+        temp.transform.parent = GameObject.Find("Scene1Connections").transform;
     }
 }

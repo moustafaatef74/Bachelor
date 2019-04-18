@@ -9,11 +9,13 @@ using Random = System.Random;
 
 public class CodeOnClick : MonoBehaviour
 {
+    public LevelSwitching levelSwitching;
     int colorRand = 0;
     public GameObject codeBlock;
     public GameObject placeHolder;
     public AudioClip done;
-    public AudioClip zap;
+    public AudioClip take;
+    public AudioClip put;
     public GameObject codeAssembler;
     GameObject currentBlock;
     int connectionDone = 0;
@@ -50,6 +52,7 @@ public class CodeOnClick : MonoBehaviour
             if (Input.GetMouseButtonDown(0) & hit.collider.tag == "codeBlock")
             {
                 currentBlock = hit.collider.gameObject;
+                AudioSource.PlayClipAtPoint(take, hit.collider.transform.position);
 
             }
 
@@ -72,20 +75,22 @@ public class CodeOnClick : MonoBehaviour
                 //temp.name = hit.collider.name;
                 temp.transform.parent = codeAssembler.transform;
                 temp.transform.position = hit.collider.transform.position + new Vector3(0, 0, 0);
+                temp.transform.Rotate(0, 270, 0);
+                temp.transform.localScale = new Vector3(.33f, 1f, 1f);
                 temp.SetActive(true);
                 connected[j] = temp;
-                codeAssembler.transform.FindChild("placeHolder").transform.position += new Vector3(0, -1, 0);
+                codeAssembler.transform.FindChild("placeHolder").transform.position += new Vector3(0, -0.33f, 0);
 
 
 
                 //connected[i+1, j] = null;
                 print(connected[j].name);
-                codeAssembler.transform.position += new Vector3(0, 1, 0);
+                codeAssembler.transform.position += new Vector3(0, 0.33f, 0);
                 //PointA.name = hit.collider.name;
                 //PointA.transform.GetChild(0).name = hit.collider.name;
                 //PointA.transform.GetChild(1).name = hit.collider.name;
                 j++;
-                AudioSource.PlayClipAtPoint(zap, temp.transform.position);
+                AudioSource.PlayClipAtPoint(put, temp.transform.position);
             }
             if (Input.GetMouseButtonDown(0) & hit.collider.name == "-ve")
             {
@@ -130,7 +135,7 @@ public class CodeOnClick : MonoBehaviour
             }
             if (clear)
             {
-                AudioSource.PlayClipAtPoint(done, transform.position);
+                levelSwitching.level1Done = true;
             }
         }
 
