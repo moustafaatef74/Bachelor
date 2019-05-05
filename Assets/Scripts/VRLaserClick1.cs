@@ -47,7 +47,10 @@ namespace Valve.VR.Extras
         RaycastHit hit;
         bool connection = false;
         GameObject[] connected = new GameObject[30];
-        string[] solution = new string[8] { "Forever", "digitalOn12", "Wait1", "digitalOn13", "digitalOff12", "Wait1", "digitalOff13", "EndForever" };
+        string[] solution = new string[6] { "Forever", "digitalOn12", "Wait1", "digitalOff12", "Wait1", "EndForever" };
+        string[] solution2 = new string[6] { "Forever", "digitalOff12", "Wait1", "digitalOn12", "Wait1", "EndForever" };
+        string[] solution3 = new string[6] { "Forever", "Wait1", "digitalOff12", "Wait1", "digitalOn12", "EndForever" };
+        string[] solution4 = new string[6] { "Forever", "Wait1","digitalOn12", "Wait1", "digitalOff12", "EndForever" };
         int solDone = 0;
         int checkSoli = 0;
         int checkSolj = 0;
@@ -56,9 +59,10 @@ namespace Valve.VR.Extras
         bool clear = false;
         GameObject target;
         int count = 0;
-
+        Transform position;
         private void Start()
         {
+            position = codeAssembler.transform.GetChild(0).transform;
             if (pose == null)
                 pose = this.GetComponent<SteamVR_Behaviour_Pose>();
             if (pose == null)
@@ -172,71 +176,84 @@ namespace Valve.VR.Extras
                 argsClick.flags = 0;
                 argsClick.target = hit.transform;
 
-                if (hit.collider.tag == "codeBlock")
+                if (levelSwitching.level0Done == true && levelSwitching.level1Done == false)
                 {
-                    currentBlock = hit.collider.gameObject;
-                    AudioSource.PlayClipAtPoint(take, hit.collider.transform.position);
-                }
-
-                if (hit.collider.tag == "placeHolder")
-                {
-
-                    GameObject temp = (GameObject)Instantiate(currentBlock);
-                    if (temp.gameObject.transform.GetChild(0).transform.childCount == 1)
+                    if (hit.collider.tag == "codeBlock")
                     {
-                        temp.name = currentBlock.name;
-                    }
-                    else
-                    {
-                        TextMeshProUGUI value = (temp.gameObject.transform.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>());
-                        temp.name = currentBlock.name + value.text;
-                        Destroy(temp.gameObject.transform.GetChild(1).gameObject);
-                        Destroy(temp.gameObject.transform.GetChild(2).gameObject);
+                        currentBlock = hit.collider.gameObject;
+                        AudioSource.PlayClipAtPoint(take, hit.collider.transform.position);
                     }
 
-                    //temp.name = hit.collider.name;
-                    temp.transform.parent = codeAssembler.transform;
-                    temp.transform.position = hit.collider.transform.position + new Vector3(0, 0, 0);
-                    temp.transform.Rotate(0, 270, 0);
-                    temp.transform.localScale = new Vector3(.33f, 1f, 1f);
-                    temp.SetActive(true);
-                    connected[j] = temp;
-                    codeAssembler.transform.FindChild("placeHolder").transform.position += new Vector3(0, -0.33f, 0);
-
-
-
-                    //connected[i+1, j] = null;
-                    print(connected[j].name);
-                    codeAssembler.transform.position += new Vector3(0, 1, 0);
-                    //PointA.name = hit.collider.name;
-                    //PointA.transform.GetChild(0).name = hit.collider.name;
-                    //PointA.transform.GetChild(1).name = hit.collider.name;
-                    j++;
-                    AudioSource.PlayClipAtPoint(put, temp.transform.position);
-                }
-                if (Input.GetMouseButtonDown(0) & hit.collider.name == "-ve")
-                {
-                    string value = hit.collider.gameObject.transform.parent.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>().text;
-                    int valueToInt = Convert.ToInt32(value) - 1;
-                    if (valueToInt < 0)
+                    if (hit.collider.tag == "placeHolder")
                     {
-                        valueToInt = 0;
+
+                        GameObject temp = (GameObject)Instantiate(currentBlock);
+                        if (temp.gameObject.transform.GetChild(0).transform.childCount == 1)
+                        {
+                            temp.name = currentBlock.name;
+                        }
+                        else
+                        {
+                            TextMeshProUGUI value = (temp.gameObject.transform.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>());
+                            temp.name = currentBlock.name + value.text;
+                            Destroy(temp.gameObject.transform.GetChild(1).gameObject);
+                            Destroy(temp.gameObject.transform.GetChild(2).gameObject);
+                        }
+
+                        //temp.name = hit.collider.name;
+                        temp.transform.parent = codeAssembler.transform;
+                        temp.transform.position = hit.collider.transform.position + new Vector3(0, 0, 0);
+                        temp.transform.Rotate(0, 270, 0);
+                        temp.transform.localScale = new Vector3(.33f, 1f, 1f);
+                        temp.SetActive(true);
+                        connected[j] = temp;
+                        codeAssembler.transform.FindChild("placeHolder").transform.position += new Vector3(0, -0.33f, 0);
+
+
+
+                        //connected[i+1, j] = null;
+                        print(connected[j].name);
+                        codeAssembler.transform.position += new Vector3(0, 1, 0);
+                        //PointA.name = hit.collider.name;
+                        //PointA.transform.GetChild(0).name = hit.collider.name;
+                        //PointA.transform.GetChild(1).name = hit.collider.name;
+                        j++;
+                        AudioSource.PlayClipAtPoint(put, temp.transform.position);
                     }
-                    hit.collider.gameObject.transform.parent.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>().text = valueToInt + "";
-                }
-                if (Input.GetMouseButtonDown(0) & hit.collider.name == "+ve")
-                {
-                    string value = hit.collider.gameObject.transform.parent.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>().text;
-                    int valueToInt = System.Convert.ToInt32(value) + 1;
-                    hit.collider.gameObject.transform.parent.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>().text = valueToInt + "";
-                }
-                if (clear == false)
-                {
-                    checkScore();
-                }
+                    if (hit.collider.name == "-ve")
+                    {
+                        string value = hit.collider.gameObject.transform.parent.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>().text;
+                        int valueToInt = Convert.ToInt32(value) - 1;
+                        if (valueToInt < 0)
+                        {
+                            valueToInt = 0;
+                        }
+                        hit.collider.gameObject.transform.parent.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>().text = valueToInt + "";
+                    }
+                    if (hit.collider.name == "+ve")
+                    {
+                        string value = hit.collider.gameObject.transform.parent.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>().text;
+                        int valueToInt = System.Convert.ToInt32(value) + 1;
+                        hit.collider.gameObject.transform.parent.Find("Canvas/value").gameObject.GetComponent<TextMeshProUGUI>().text = valueToInt + "";
+                    }
+                    if (hit.collider.name == "reset")
+                    {
+                        for (int loopdestroy = 0; loopdestroy < connected.Length; loopdestroy++)
+                        {
+                            GameObject.Destroy(connected[loopdestroy]);
+                            connected[loopdestroy] = null;
+                        }
+                        //placeHolder.transform.position = position.position;
+                        codeAssembler.transform.GetChild(0).transform.position = position.position - new Vector3(0, j * 0.33f, 0);
+                        j = 0;
+                    }
+                    if (clear == false)
+                    {
+                        checkScore();
+                    }
 
 
-
+                }
                 OnPointerClick(argsClick);
             }
 
@@ -286,6 +303,78 @@ namespace Valve.VR.Extras
                 
                 levelSwitching.level1Done = true;
                 
+            }
+            else
+            {
+                if (j >= solution2.Length)
+                {
+
+                    for (checkSoli = 0; checkSoli < solution2.Length; checkSoli++)
+                    {
+
+                        if (connected[checkSoli].name == solution2[checkSoli])
+                        {
+                            clear = true;
+                        }
+                        else
+                        {
+                            clear = false;
+                            break;
+                        }
+                    }
+                }
+                if (clear)
+                {
+                    levelSwitching.level2Done = true;
+                }
+                else
+                {
+                    if (j >= solution3.Length)
+                    {
+
+                        for (checkSoli = 0; checkSoli < solution3.Length; checkSoli++)
+                        {
+
+                            if (connected[checkSoli].name == solution3[checkSoli])
+                            {
+                                clear = true;
+                            }
+                            else
+                            {
+                                clear = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (clear)
+                    {
+                        levelSwitching.level2Done = true;
+                    }
+                    else
+                    {
+                        if (j >= solution4.Length)
+                        {
+
+                            for (checkSoli = 0; checkSoli < solution4.Length; checkSoli++)
+                            {
+
+                                if (connected[checkSoli].name == solution4[checkSoli])
+                                {
+                                    clear = true;
+                                }
+                                else
+                                {
+                                    clear = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (clear)
+                        {
+                            levelSwitching.level2Done = true;
+                        }
+                    }
+                }
             }
         }
     }

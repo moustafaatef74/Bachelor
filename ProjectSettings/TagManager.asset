@@ -10,6 +10,9 @@ TagManager:
   - codeBlock
   - placeHolder
   - MainGameController
+  - Condition
+  - Zport
+  - ColorObject
   layers:
   - Default
   - TransparentFX

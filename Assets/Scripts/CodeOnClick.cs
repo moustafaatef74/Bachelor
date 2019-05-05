@@ -9,6 +9,7 @@ using Random = System.Random;
 
 public class CodeOnClick : MonoBehaviour
 {
+    public GameObject codeonclick2;
     public LevelSwitching levelSwitching;
     int colorRand = 0;
     public GameObject codeBlock;
@@ -24,7 +25,10 @@ public class CodeOnClick : MonoBehaviour
     RaycastHit hit;
     bool connection = false;
     GameObject[] connected = new GameObject[20];
-    string[] solution = new string[8] { "Forever", "digitalOn12", "Wait1", "digitalOn13", "digitalOff12", "Wait1", "digitalOff13", "EndForever" };
+    string[] solution = new string[6] { "Forever", "digitalOn12", "Wait1", "digitalOff12", "Wait1", "EndForever" };
+    string[] solution2 = new string[6] { "Forever", "digitalOff12", "Wait1", "digitalOn12", "Wait1", "EndForever" };
+    string[] solution3 = new string[6] { "Forever", "Wait1", "digitalOff12", "Wait1", "digitalOn12", "EndForever" };
+    string[] solution4 = new string[6] { "Forever", "Wait1", "digitalOn12", "Wait1", "digitalOff12", "EndForever" };
     int solDone = 0;
     int checkSoli = 0;
     int checkSolj = 0;
@@ -36,11 +40,11 @@ public class CodeOnClick : MonoBehaviour
     double red = 0;
     double blue = 0;
     double green = 0;
-
+    Transform position;
     // Start is called before the first frame update
     void Start()
     {
-
+        position = codeAssembler.transform.GetChild(0).transform;
     }
 
     // Update is called once per frame
@@ -55,7 +59,17 @@ public class CodeOnClick : MonoBehaviour
                 AudioSource.PlayClipAtPoint(take, hit.collider.transform.position);
 
             }
-
+            if (Input.GetMouseButtonDown(0) & hit.collider.name == "reset")
+            {
+                for(int loopdestroy = 0; loopdestroy < connected.Length; loopdestroy++)
+                {
+                    GameObject.Destroy(connected[loopdestroy]);
+                    connected[loopdestroy] = null;
+                }
+                //placeHolder.transform.position = position.position;
+                codeAssembler.transform.GetChild(0).transform.position = position.position - new Vector3(0, j * 0.33f, 0);
+                j = 0;
+            }
             if (Input.GetMouseButtonDown(0) & hit.collider.tag == "placeHolder")
             {
 
@@ -135,7 +149,89 @@ public class CodeOnClick : MonoBehaviour
             }
             if (clear)
             {
+
                 levelSwitching.level1Done = true;
+                codeonclick2.GetComponent<CodeOnClick2>().enabled = true;
+                this.GetComponent<CodeOnClick>().enabled = false;
+
+            }
+            else
+            {
+                if (j >= solution2.Length)
+                {
+
+                    for (checkSoli = 0; checkSoli < solution2.Length; checkSoli++)
+                    {
+
+                        if (connected[checkSoli].name == solution2[checkSoli])
+                        {
+                            clear = true;
+                        }
+                        else
+                        {
+                            clear = false;
+                            break;
+                        }
+                    }
+                }
+                if (clear)
+                {
+                    levelSwitching.level2Done = true;
+                    codeonclick2.GetComponent<CodeOnClick2>().enabled = true;
+                    this.GetComponent<CodeOnClick>().enabled = false;
+                }
+                else
+                {
+                    if (j >= solution3.Length)
+                    {
+
+                        for (checkSoli = 0; checkSoli < solution3.Length; checkSoli++)
+                        {
+
+                            if (connected[checkSoli].name == solution3[checkSoli])
+                            {
+                                clear = true;
+                            }
+                            else
+                            {
+                                clear = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (clear)
+                    {
+                        levelSwitching.level2Done = true;
+                        codeonclick2.GetComponent<CodeOnClick2>().enabled = true;
+                        this.GetComponent<CodeOnClick>().enabled = false;
+                    }
+                    else
+                    {
+                        if (j >= solution4.Length)
+                        {
+
+                            for (checkSoli = 0; checkSoli < solution4.Length; checkSoli++)
+                            {
+
+                                if (connected[checkSoli].name == solution4[checkSoli])
+                                {
+                                    clear = true;
+                                }
+                                else
+                                {
+                                    clear = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (clear)
+                        {
+                            levelSwitching.level2Done = true;
+                            codeonclick2.GetComponent<CodeOnClick2>().enabled = true;
+                            this.GetComponent<CodeOnClick>().enabled = false;
+                        }
+                    }
+                }
             }
         }
 

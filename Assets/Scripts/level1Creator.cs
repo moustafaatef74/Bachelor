@@ -29,7 +29,7 @@ public class level1Creator : MonoBehaviour
         connected[3, 0] = GameObject.Find("arduino (1)").transform.FindChild("Box002").transform.FindChild("GND").gameObject;
         connected[3, 1] = GameObject.Find("LED (1)").transform.FindChild("negativePort").gameObject;
         Connect();
-        i++;
+        
 
         for (int i = 0; i < connected.GetLength(0); i++)
         {

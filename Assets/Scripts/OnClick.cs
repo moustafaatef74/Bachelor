@@ -8,7 +8,7 @@ using Random = System.Random;
 public class OnClick : MonoBehaviour
 {
     public LevelSwitching levelSwitching;
-
+    public GameObject codeonclick;
     int colorRand = 0;
     public GameObject malecable;
     public GameObject femalecable;
@@ -45,7 +45,7 @@ public class OnClick : MonoBehaviour
             if (Input.GetMouseButtonDown(0) & hit.collider.tag == "port")
             { GameObject temp = (GameObject)Instantiate(malecable);
                 temp.name = hit.collider.name;
-
+                temp.transform.parent = GameObject.Find("Connections").transform;
                 temp.transform.position = hit.collider.transform.position + new Vector3(0, 0, 0);
                 temp.SetActive(true);
                 connected[i, j] = hit.collider.gameObject;
@@ -61,6 +61,7 @@ public class OnClick : MonoBehaviour
             {
                 GameObject temp = (GameObject)Instantiate(femalecable);
                 temp.name = hit.collider.name;
+                temp.transform.parent = GameObject.Find("Connections").transform;
                 temp.transform.position = hit.collider.transform.position + new Vector3(0, -0.25f, 0);
                 temp.SetActive(true);
                 connected[i, j] = hit.collider.gameObject;
@@ -72,7 +73,26 @@ public class OnClick : MonoBehaviour
                 AudioSource.PlayClipAtPoint(zap,temp.transform.position);
             }
 
-
+            if (Input.GetMouseButtonDown(0) & hit.collider.name == "reset")
+            {
+                for(int loopdestroy = 0; loopdestroy < connected.GetLength(0); loopdestroy++)
+                {
+                    for (int loopdestroy1 = 0; loopdestroy1 < connected.GetLength(1); loopdestroy1++)
+                    {
+                        connected[loopdestroy, loopdestroy1] = null;
+                    }
+                }
+                solution = new string[2, 2] { { "5V", "positivePort" }, { "GND", "negativePort" } };
+                GameObject connections = GameObject.Find("Connections");
+                for(int loopdestroy = 0; loopdestroy < connections.transform.childCount; loopdestroy++)
+                {
+                    GameObject.Destroy(connections.transform.GetChild(loopdestroy).gameObject);
+                }
+                //placeHolder.transform.position = position.position;
+                j = 0;
+                connectionDone = 0;
+                solDone = 0;
+            }
 
             /*if (Input.GetMouseButtonDown(0) & hit.collider.tag == "jumper")
             {
@@ -99,7 +119,7 @@ public class OnClick : MonoBehaviour
             if (j == 2)
             {
                 GameObject temp = Instantiate(wire);
-
+                temp.transform.parent = GameObject.Find("Connections").transform;
                 GameObject start = temp.transform.GetChild(1).gameObject;
                 Collider c = connected[i, 0].GetComponent<Collider>();
                 if (connected[i, 0].tag == "port")
@@ -169,8 +189,9 @@ public class OnClick : MonoBehaviour
         }
         if (solDone == solution.GetLength(0))
         {
-            levelSwitching.level0Done = true;            
-
+            levelSwitching.level0Done = true;
+            codeonclick.GetComponent<CodeOnClick>().enabled = true;
+            this.GetComponent<OnClick>().enabled = false;
         }
     }
 

@@ -162,7 +162,7 @@ namespace Valve.VR.Extras
                 dist = hit.distance;
             }
 
-            if (bHit && interactWithUI.GetStateUp(pose.inputSource))
+            if (bHit && interactWithUI.GetStateUp(pose.inputSource) )
             {
                 PointerEventArgs argsClick = new PointerEventArgs();
                 argsClick.fromInputSource = pose.inputSource;
@@ -201,6 +201,26 @@ namespace Valve.VR.Extras
                         j++;
                         AudioSource.PlayClipAtPoint(zap, temp.transform.position);
                     }
+                    if (hit.collider.name == "reset")
+                    {
+                        for (int loopdestroy = 0; loopdestroy < connected.GetLength(0); loopdestroy++)
+                        {
+                            for (int loopdestroy1 = 0; loopdestroy1 < connected.GetLength(1); loopdestroy1++)
+                            {
+                                connected[loopdestroy, loopdestroy1] = null;
+                            }
+                        }
+                        solution = new string[2, 2] { { "5V", "positivePort" }, { "GND", "negativePort" } };
+                        GameObject connections = GameObject.Find("Connections");
+                        for (int loopdestroy = 0; loopdestroy < connections.transform.childCount; loopdestroy++)
+                        {
+                            GameObject.Destroy(connections.transform.GetChild(loopdestroy).gameObject);
+                        }
+                        j = 0;
+                        connectionDone = 0;
+                        solDone = 0;
+                    }
+
                     if (j == 2)
                     {
                         makeWire();

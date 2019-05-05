@@ -9,13 +9,12 @@ public class waitRollerCoaster : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        StartCoroutine(AnimationController());
+        //StartCoroutine(AnimationController());
     }
 
     // Update is called once per frame
     void Update()
     {
-        
     }
     private IEnumerator AnimationController()
     {
@@ -23,6 +22,6 @@ public class waitRollerCoaster : MonoBehaviour
         yield return new WaitForSeconds(4);
         animator.Play("loop");
         yield return new WaitForSeconds(14);
-        SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
+        //SceneManager.LoadSceneAsync("Main", LoadSceneMode.Single);
     }
 }
